@@ -9,9 +9,11 @@ pipeline {
         BUILD_DIR = "built"
         REPO_URL = "https://github.com/mathew512/springboot-java.git"
         BRANCH = "main"
+        PROJECT_DIR = "springboot-java"
     }
 
     stages {
+
         stage('Checkout Code') {
             steps {
                 git branch: "${BRANCH}",
@@ -22,8 +24,10 @@ pipeline {
 
         stage('Build with Maven') {
             steps {
-                // Run Maven from the root where pom.xml is located
-                sh 'mvn clean package -DskipTests'
+                dir("${PROJECT_DIR}") {
+                    // Ensure Maven is available on Jenkins agent
+                    sh 'mvn clean package -DskipTests'
+                }
             }
         }
 
@@ -31,7 +35,7 @@ pipeline {
             steps {
                 sh '''
                     mkdir -p ${BUILD_DIR}
-                    cp target/*.jar ${BUILD_DIR}/
+                    cp ${PROJECT_DIR}/target/*.jar ${BUILD_DIR}/
                 '''
             }
         }

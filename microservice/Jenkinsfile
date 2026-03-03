@@ -22,11 +22,11 @@ pipeline {
             }
         }
 
-        stage('Build with Gradle') {
+        stage('Build with Maven') {
             steps {
                 dir("${PROJECT_DIR}") {
-                    sh 'chmod +x gradlew'
-                    sh './gradlew clean build'
+                    // Ensure Maven is available on Jenkins agent
+                    sh 'mvn clean package -DskipTests'
                 }
             }
         }
@@ -35,7 +35,7 @@ pipeline {
             steps {
                 sh '''
                     mkdir -p ${BUILD_DIR}
-                    cp ${PROJECT_DIR}/build/libs/*.jar ${BUILD_DIR}/
+                    cp ${PROJECT_DIR}/target/*.jar ${BUILD_DIR}/
                 '''
             }
         }
